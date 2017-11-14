@@ -1,4 +1,4 @@
-package randomip
+package main
 
 import (
 	ejson "encoding/json"
@@ -26,7 +26,7 @@ type Result bool
 func (i *ipUpdater) ipupdate(args *Args, result *Result) error {
 	//myargs := &Args{args.ipset}
 	//var reply bool
-	err := i.client.Call("ipupdate", args, &result)
+	err := i.client.Call("ipupdater", args, &result)
 	return err
 }
 
@@ -42,9 +42,9 @@ func main() {
 		//  compare
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
-			//ips, _ := ejson.Marshal(newipset)
+			log.Println("send ip set")
 			dest, _ := exec.Command("echo", os.Getenv("MACH1_ADDR")).Output()
-			client, err := rpc.DialHTTP("tcp", string(dest)+":1234")
+			client, err := rpc.DialHTTP("tcp", string(dest))
 			if err != nil {
 				fmt.Println("error : ", err)
 			}
