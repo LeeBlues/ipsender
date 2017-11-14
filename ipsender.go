@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
-	"os/exec"
+
 	"reflect"
 	"time"
 )
@@ -42,9 +42,9 @@ func main() {
 		//  compare
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
-			log.Println("send ip set")
-			dest, _ := exec.Command("echo", os.Getenv("MACH1_ADDR")).Output()
-			client, err := rpc.DialHTTP("tcp", string(dest))
+			log.Println("send ip set", newipset)
+			//dest, _ := exec.Command("echo", os.Getenv("MACH1_ADDR")).Output()
+			client, err := rpc.DialHTTP("tcp", string(os.Getenv("MACH1_ADDR")))
 			if err != nil {
 				fmt.Println("error : ", err)
 			}
