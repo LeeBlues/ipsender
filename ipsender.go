@@ -4,11 +4,12 @@ import (
 	ejson "encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
+	//	"math/rand"
+	"net"
 	"net/http"
 	"net/rpc"
+	"net/rpc/jsonrpc"
 	"os"
-
 	"reflect"
 	"time"
 )
@@ -24,8 +25,6 @@ type Args struct {
 type Result bool
 
 func (i *ipUpdater) ipupdate(args *Args, result *Result) error {
-	//myargs := &Args{args.ipset}
-	//var reply bool
 	err := i.client.Call("ipupdater", args, &result)
 	return err
 }
@@ -35,21 +34,26 @@ func main() {
 	var oldipset []string
 
 	for {
-		var response Result
-		rand.Seed(time.Now().UTC().UnixNano())
+		//rand.Seed(time.Now().UTC().UnixNano())
 		url := "https://app.rainforestqa.com/api/1/vm_stack"
 		newipset, _ = getIPsfromHTTP(url)
 		//  compare
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
 			log.Println("send ip set", newipset)
-			//dest, _ := exec.Command("echo", os.Getenv("MACH1_ADDR")).Output()
-			client, err := rpc.DialHTTP("tcp", string(os.Getenv("MACH1_ADDR")))
+			client, err := net.Dial("tcp", string(os.Getenv("MACH1_ADDR")))
 			if err != nil {
 				fmt.Println("error : ", err)
 			}
-			ipupdater := &ipUpdater{client: client}
-			ipupdater.ipupdate(&Args{newipset}, &response)
+			//			ipupdater := &ipUpdater{client: client}
+			//		ipupdater.ipupdate(&Args{newipset}, &response)
+			args := &Args{newipset}
+			var res Result
+			c := jsonrpc.NewClient(client)
+			err = c.Call("IpUpdater.IpUpdate", args, &res)
+			if err != nil {
+				log.Fatal("arith error:", err)
+			}
 		} else {
 			log.Println("ipset does not changed")
 		}
