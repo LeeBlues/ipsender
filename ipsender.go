@@ -20,7 +20,7 @@ type ipUpdater struct {
 }
 */
 
-type Args struct{ IP string }
+type Args struct{ IPS []string }
 type Result bool
 
 /*
@@ -46,20 +46,23 @@ func main() {
 				fmt.Println("error : ", err)
 			}
 			c := jsonrpc.NewClient(client)
-			dummy := &Args{newipset[0]}
+			dummy := &Args{nil}
 			err = c.Call("IpUpdater.IpUpdateInit", dummy, &res)
 			if err != nil {
 				log.Fatal("IpUpdateInit error:", err)
 			}
-			for i := 0; i < len(newipset); i++ {
-				args := &Args{newipset[i]}
-				log.Println("send : ", args)
-				err = c.Call("IpUpdater.AccumIp", args, &res)
-				if err != nil {
-					log.Fatal("AccumIp error:", err)
+			/*
+				for i := 0; i < len(newipset); i++ {
+					args := &Args{newipset[i]}
+					log.Println("send : ", args)
+					err = c.Call("IpUpdater.AccumIp", args, &res)
+					if err != nil {
+						log.Fatal("AccumIp error:", err)
+					}
 				}
-			}
-			err = c.Call("IpUpdater.IpUpdate", dummy, &res)
+			*/
+			args := &Args{newipset}
+			err = c.Call("IpUpdater.IpUpdate", args, &res)
 			if err != nil {
 				log.Fatal("IpUpdate error:", err)
 			}
