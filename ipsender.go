@@ -7,28 +7,28 @@ import (
 	//	"math/rand"
 	"net"
 	"net/http"
-	"net/rpc"
+	//	"net/rpc"
 	"net/rpc/jsonrpc"
 	"os"
 	"reflect"
 	"time"
 )
 
+/*
 type ipUpdater struct {
 	client *rpc.Client
 }
+*/
 
-type Args struct {
-	ip string
-}
-
+type Args struct{ ip string }
 type Result bool
 
+/*
 func (i *ipUpdater) ipupdate(args *Args, result *Result) error {
 	err := i.client.Call("ipupdater", args, &result)
 	return err
 }
-
+*/
 func main() {
 	var newipset []string
 	var oldipset []string
@@ -52,8 +52,8 @@ func main() {
 				log.Fatal("IpUpdateInit error:", err)
 			}
 			for i := 0; i < len(newipset); i++ {
-				log.Println("send ip: ", newipset[i])
 				args := &Args{newipset[i]}
+				log.Println("send : ", args)
 				err = c.Call("IpUpdater.AccumIp", args, &res)
 				if err != nil {
 					log.Fatal("AccumIp error:", err)
