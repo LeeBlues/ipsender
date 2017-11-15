@@ -9,7 +9,6 @@ import (
 	"net/rpc/jsonrpc"
 	"os"
 	"reflect"
-	"strconv"
 	"time"
 )
 
@@ -26,24 +25,28 @@ func main() {
 		//  compare
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
-			for i := 1; i < 3; i++ { //temporaily hardcoded
-				s := "MACH" + strconv.Itoa(i) + "_ADDR"
-				client, err := net.Dial("tcp", string(os.Getenv(s)))
-				if err != nil {
-					fmt.Println("error : ", err)
+			go sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
+			go sendIPS(newipset, string(os.Getenv("MACH2_ADDR")))
+			/*
+				for i := 1; i < 3; i++ { //temporaily hardcoded
+					s := "MACH" + strconv.Itoa(i) + "_ADDR"
+					client, err := net.Dial("tcp", string(os.Getenv(s)))
+					if err != nil {
+						fmt.Println("error : ", err)
+					}
+					c := jsonrpc.NewClient(client)
+					dummy := &Args{nil}
+					err = c.Call("IpUpdater.IpUpdateInit", dummy, &res)
+					if err != nil {
+						log.Fatal("IpUpdateInit error:", err)
+					}
+					args := &Args{newipset}
+					err = c.Call("IpUpdater.IpUpdate", args, &res)
+					if err != nil {
+						log.Fatal("IpUpdate error:", err)
+					}
 				}
-				c := jsonrpc.NewClient(client)
-				dummy := &Args{nil}
-				err = c.Call("IpUpdater.IpUpdateInit", dummy, &res)
-				if err != nil {
-					log.Fatal("IpUpdateInit error:", err)
-				}
-				args := &Args{newipset}
-				err = c.Call("IpUpdater.IpUpdate", args, &res)
-				if err != nil {
-					log.Fatal("IpUpdate error:", err)
-				}
-			}
+			*/
 		} else {
 			log.Println("ipset not changed")
 		}
@@ -51,6 +54,28 @@ func main() {
 		//sleep
 		time.Sleep(2000 * time.Millisecond)
 	}
+}
+
+func sendIPS(newipset []string, machaddr string) {
+	var res Result
+	//for i := 1; i < 3; i++ { //temporaily hardcoded
+	//s := "MACH" + strconv.Itoa(i) + "_ADDR"
+	client, err := net.Dial("tcp", machaddr)
+	if err != nil {
+		fmt.Println("error : ", err)
+	}
+	c := jsonrpc.NewClient(client)
+	dummy := &Args{nil}
+	err = c.Call("IpUpdater.IpUpdateInit", dummy, &res)
+	if err != nil {
+		log.Fatal("IpUpdateInit error:", err)
+	}
+	args := &Args{newipset}
+	err = c.Call("IpUpdater.IpUpdate", args, &res)
+	if err != nil {
+		log.Fatal("IpUpdate error:", err)
+	}
+	//}
 }
 
 func getIPsfromHTTP(url string) ([]string, bool) {
