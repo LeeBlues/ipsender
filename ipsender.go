@@ -20,7 +20,7 @@ type ipUpdater struct {
 }
 */
 
-type Args struct{ ip string }
+type Args struct{ IP string }
 type Result bool
 
 /*
