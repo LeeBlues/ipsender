@@ -53,14 +53,14 @@ func main() {
 			}
 			for i := 0; i < len(newipset); i++ {
 				args := &Args{newipset[i]}
-				err = c.Call("IpUpdater.IpUpdate", args, &res)
+				err = c.Call("IpUpdater.AccumIp", args, &res)
 				if err != nil {
-					log.Fatal("Ipupdater error:", err)
+					log.Fatal("AccumIp error:", err)
 				}
 			}
-			err = c.Call("IpUpdater.IpUpdateEnd", dummy, &res)
+			err = c.Call("IpUpdater.IpUpdate", args, &res)
 			if err != nil {
-				log.Fatal("IpUpdateEnd error:", err)
+				log.Fatal("IpUpdate error:", err)
 			}
 		} else {
 			log.Println("ipset not changed")
