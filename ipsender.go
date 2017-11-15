@@ -19,7 +19,7 @@ type ipUpdater struct {
 }
 
 type Args struct {
-	ipset []string
+	ip string
 }
 
 type Result bool
@@ -47,13 +47,22 @@ func main() {
 			}
 			//			ipupdater := &ipUpdater{client: client}
 			//		ipupdater.ipupdate(&Args{newipset}, &response)
-			args := &Args{newipset}
-			var res Result
+
+			//	var res Result
 			c := jsonrpc.NewClient(client)
-			err = c.Call("IpUpdater.IpUpdate", args, &res)
-			if err != nil {
-				log.Fatal("arith error:", err)
+			for i := 0; i < len(newipset); i++ {
+				args := &Args{newipset[i]}
+				err = c.Call("IpUpdater.IpUpdate", args, &res)
+				if err != nil {
+					log.Fatal("arith error:", err)
+				}
 			}
+			/*
+				err = c.Call("IpUpdater.IpUpdate", args, &res)
+				if err != nil {
+					log.Fatal("arith error:", err)
+				}
+			*/
 		} else {
 			log.Println("ipset not changed")
 		}
