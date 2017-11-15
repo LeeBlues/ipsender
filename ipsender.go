@@ -40,7 +40,7 @@ func main() {
 		//  compare
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
-			log.Println("send ip set", newipset)
+
 			client, err := net.Dial("tcp", string(os.Getenv("MACH1_ADDR")))
 			if err != nil {
 				fmt.Println("error : ", err)
@@ -52,13 +52,14 @@ func main() {
 				log.Fatal("IpUpdateInit error:", err)
 			}
 			for i := 0; i < len(newipset); i++ {
+				log.Println("send ip: ", newipset[i])
 				args := &Args{newipset[i]}
 				err = c.Call("IpUpdater.AccumIp", args, &res)
 				if err != nil {
 					log.Fatal("AccumIp error:", err)
 				}
 			}
-			err = c.Call("IpUpdater.IpUpdate", args, &res)
+			err = c.Call("IpUpdater.IpUpdate", dummy, &res)
 			if err != nil {
 				log.Fatal("IpUpdate error:", err)
 			}
