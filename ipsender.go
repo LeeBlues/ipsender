@@ -55,7 +55,7 @@ func main() {
 				log.Fatal("arith error:", err)
 			}
 		} else {
-			log.Println("ipset does not changed")
+			log.Println("ipset not changed")
 		}
 		oldipset = newipset
 		//sleep
