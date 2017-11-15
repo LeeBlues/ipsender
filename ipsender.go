@@ -46,9 +46,10 @@ func main() {
 				fmt.Println("error : ", err)
 			}
 			c := jsonrpc.NewClient(client)
-			err = c.Call("IpUpdater.IpUpdateInit", "nil", &res)
+			dummy := &Args{newipset[0]}
+			err = c.Call("IpUpdater.IpUpdateInit", dummy, &res)
 			if err != nil {
-				log.Fatal("arith error:", err)
+				log.Fatal("IpUpdateInit error:", err)
 			}
 			for i := 0; i < len(newipset); i++ {
 				args := &Args{newipset[i]}
@@ -57,9 +58,9 @@ func main() {
 					log.Fatal("Ipupdater error:", err)
 				}
 			}
-			err = c.Call("IpUpdater.IpUpdateEnd", "nil", &res)
+			err = c.Call("IpUpdater.IpUpdateEnd", dummy, &res)
 			if err != nil {
-				log.Fatal("arith error:", err)
+				log.Fatal("IpUpdateEnd error:", err)
 			}
 		} else {
 			log.Println("ipset not changed")
