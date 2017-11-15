@@ -2,7 +2,6 @@ package main
 
 import (
 	ejson "encoding/json"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -27,26 +26,6 @@ func main() {
 		if res == false {
 			go sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
 			go sendIPS(newipset, string(os.Getenv("MACH2_ADDR")))
-			/*
-				for i := 1; i < 3; i++ { //temporaily hardcoded
-					s := "MACH" + strconv.Itoa(i) + "_ADDR"
-					client, err := net.Dial("tcp", string(os.Getenv(s)))
-					if err != nil {
-						fmt.Println("error : ", err)
-					}
-					c := jsonrpc.NewClient(client)
-					dummy := &Args{nil}
-					err = c.Call("IpUpdater.IpUpdateInit", dummy, &res)
-					if err != nil {
-						log.Fatal("IpUpdateInit error:", err)
-					}
-					args := &Args{newipset}
-					err = c.Call("IpUpdater.IpUpdate", args, &res)
-					if err != nil {
-						log.Fatal("IpUpdate error:", err)
-					}
-				}
-			*/
 		} else {
 			log.Println("ipset not changed")
 		}
@@ -58,24 +37,24 @@ func main() {
 
 func sendIPS(newipset []string, machaddr string) {
 	var res Result
-	//for i := 1; i < 3; i++ { //temporaily hardcoded
-	//s := "MACH" + strconv.Itoa(i) + "_ADDR"
 	client, err := net.Dial("tcp", machaddr)
 	if err != nil {
-		fmt.Println("error : ", err)
+		log.Println("Dial error : ", err)
+		return
 	}
 	c := jsonrpc.NewClient(client)
 	dummy := &Args{nil}
 	err = c.Call("IpUpdater.IpUpdateInit", dummy, &res)
 	if err != nil {
-		log.Fatal("IpUpdateInit error:", err)
+		log.Println("IpUpdateInit error:", err)
+		return
 	}
 	args := &Args{newipset}
 	err = c.Call("IpUpdater.IpUpdate", args, &res)
 	if err != nil {
-		log.Fatal("IpUpdate error:", err)
+		log.Println("IpUpdate error:", err)
+		return
 	}
-	//}
 }
 
 func getIPsfromHTTP(url string) ([]string, bool) {
