@@ -45,24 +45,22 @@ func main() {
 			if err != nil {
 				fmt.Println("error : ", err)
 			}
-			//			ipupdater := &ipUpdater{client: client}
-			//		ipupdater.ipupdate(&Args{newipset}, &response)
-
-			//	var res Result
 			c := jsonrpc.NewClient(client)
+			err = c.Call("IpUpdater.IpUpdateInit", "nil", &res)
+			if err != nil {
+				log.Fatal("arith error:", err)
+			}
 			for i := 0; i < len(newipset); i++ {
 				args := &Args{newipset[i]}
 				err = c.Call("IpUpdater.IpUpdate", args, &res)
 				if err != nil {
-					log.Fatal("arith error:", err)
+					log.Fatal("Ipupdater error:", err)
 				}
 			}
-			/*
-				err = c.Call("IpUpdater.IpUpdate", args, &res)
-				if err != nil {
-					log.Fatal("arith error:", err)
-				}
-			*/
+			err = c.Call("IpUpdater.IpUpdateEnd", "nil", &res)
+			if err != nil {
+				log.Fatal("arith error:", err)
+			}
 		} else {
 			log.Println("ipset not changed")
 		}
