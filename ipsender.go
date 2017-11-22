@@ -2,6 +2,7 @@ package main
 
 import (
 	ejson "encoding/json"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -19,13 +20,14 @@ func main() {
 	var oldipset []string
 	for {
 		//rand.Seed(time.Now().UTC().UnixNano())
-		url := "https://app.rainforestqa.com/api/1/vm_stack"
-		newipset, _ = getIPsfromHTTP(url)
+		//url := "https://app.rainforestqa.com/api/1/vm_stack"
+		//newipset, _ = getIPsfromHTTP(url)
+		path := os.Getenv("HOME") + "/addrbook.json"
+		newipset, _ = getIPsFromFile(path)
 		//  compare
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
 			go sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
-			go sendIPS(newipset, string(os.Getenv("MACH2_ADDR")))
 		} else {
 			log.Println("ipset not changed")
 		}
@@ -55,6 +57,22 @@ func sendIPS(newipset []string, machaddr string) {
 		log.Println("IpUpdate error:", err)
 		return
 	}
+}
+
+func getIPsFromFile(path string) ([]string, bool) {
+	raw, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Println("Unable to get json IPs from file. ", err.Error())
+		return nil, false
+	}
+	//Unmarshaling
+	var data []string
+	err = ejson.Unmarshal(raw, &data)
+	if err != nil {
+		log.Println("Unable to Unmarshal IPs from json. ", err.Error())
+		return nil, false
+	}
+	return data, true
 }
 
 func getIPsfromHTTP(url string) ([]string, bool) {
