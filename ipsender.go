@@ -45,12 +45,6 @@ func sendIPS(newipset []string, machaddr string) {
 		return
 	}
 	c := jsonrpc.NewClient(client)
-	dummy := &Args{nil}
-	err = c.Call("IpUpdater.IpUpdateInit", dummy, &res)
-	if err != nil {
-		log.Println("IpUpdateInit error:", err)
-		return
-	}
 	args := &Args{newipset}
 	err = c.Call("IpUpdater.IpUpdate", args, &res)
 	if err != nil {
