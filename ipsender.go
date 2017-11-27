@@ -15,16 +15,21 @@ import (
 type Args struct{ IPS []string }
 type Result bool
 
+func test() {
+
+}
+
 func main() {
 	var newipset []string
 	var oldipset []string
 	var k int = 0 //for test
+	var m int = 0 // for test
 	for {
-		//rand.Seed(time.Now().UTC().UnixNano())
 		url := "https://app.rainforestqa.com/api/1/vm_stack"
-		newipset, _ = getIPsfromHTTP(url)
-		//path := os.Getenv("HOME") + "/addrbook.json"
-		//newipset, _ = getIPsFromFile(path)
+		testipset, _ = getIPsfromHTTP(url)
+		//newipset, _ = getIPsfromHTTP(url)
+		path := os.Getenv("HOME") + "/addrbook.json"
+		/ewipset, _ = getIPsFromFile(path)
 		//  compare
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
@@ -33,9 +38,11 @@ func main() {
 			log.Println("ipset not changed")
 		}
 		oldipset = newipset
-		if k == 600 {
+		if k%600 == 0 {
 			oldipset = nil
+			newipset = append(newipset, testipset[m])
 			k = 0
+			m++
 		}
 		//sleep
 		time.Sleep(2000 * time.Millisecond)
