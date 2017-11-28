@@ -24,12 +24,15 @@ func main() {
 	var oldipset []string
 	var k int = 0 //for test
 	var m int = 0 // for test
+
+	url := "https://app.rainforestqa.com/api/1/vm_stack"
+	testipset, _ := getIPsfromHTTP(url)
+	//newipset, _ = getIPsfromHTTP(url)
+	path := os.Getenv("HOME") + "/addrbook.json"
+	newipset, _ = getIPsFromFile(path)
+
 	for {
-		url := "https://app.rainforestqa.com/api/1/vm_stack"
-		testipset, _ := getIPsfromHTTP(url)
-		//newipset, _ = getIPsfromHTTP(url)
-		path := os.Getenv("HOME") + "/addrbook.json"
-		newipset, _ = getIPsFromFile(path)
+
 		//  compare
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
