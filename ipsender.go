@@ -53,8 +53,9 @@ func main() {
 		res := reflect.DeepEqual(newipset, oldipset)
 		if res == false {
 			go sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
+			log.Println(len(newipset), " sent")
 		} else {
-			log.Println("ipset not changed")
+			//log.Println("ipset not changed")
 		}
 		oldipset = newipset
 		if k%30 == 0 {
