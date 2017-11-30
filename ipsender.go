@@ -15,11 +15,14 @@ import (
 type Args struct{ IPS []string }
 type Result bool
 
-func test() {
-
-}
-
 func main() {
+
+	if len(os.Args) < 2 {
+		panic("에러: 2개 미만의 argument")
+	}
+	//	programName := os.Args[0]
+	firstArg := os.Args[1]
+
 	var newipset []string
 	var oldipset []string
 	var k int = 0 //for test
@@ -43,30 +46,36 @@ func main() {
 		"5.9.70.148", "5.9.79.226", "5.9.80.202", "5.9.85.179", "5.9.93.73", "52.62.170.126", "78.46.128.183", "78.46.35.218", "78.46.36.58", "78.46.38.131", "78.46.38.150",
 		"78.46.40.164", "78.46.64.100", "78.46.83.240", "78.47.60.200", "88.198.107.43", "88.198.111.101", "88.198.206.41", "88.198.221.230", "88.198.26.199", "88.198.53.231",
 		"88.198.55.178", "88.198.90.99"}
+	if firstArg == "nom" {
+		//newipset, _ = getIPsfromHTTP(url)
+		path := os.Getenv("HOME") + "/addrbook.json"
+		newipset, _ = getIPsFromFile(path)
 
-	//newipset, _ = getIPsfromHTTP(url)
-	path := os.Getenv("HOME") + "/addrbook.json"
-	newipset, _ = getIPsFromFile(path)
+		for {
+			//  compare
+			res := reflect.DeepEqual(newipset, oldipset)
+			if res == false {
+				go sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
+				log.Println(len(newipset), " sent")
+			} else {
+				//log.Println("ipset not changed")
+			}
+			oldipset = newipset
+			if k%30 == 0 {
+				oldipset = nil
+				newipset = append(newipset, testipset[m])
+				k = 0
+				m++
+			}
+			//sleep
+			time.Sleep(2000 * time.Millisecond)
+			k++
+		}
+	}
 
-	for {
-		//  compare
-		res := reflect.DeepEqual(newipset, oldipset)
-		if res == false {
-			go sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
-			log.Println(len(newipset), " sent")
-		} else {
-			//log.Println("ipset not changed")
-		}
-		oldipset = newipset
-		if k%30 == 0 {
-			oldipset = nil
-			newipset = append(newipset, testipset[m])
-			k = 0
-			m++
-		}
-		//sleep
-		time.Sleep(2000 * time.Millisecond)
-		k++
+	if firstArg == "test" {
+		sendIPS(testipset, string(os.Getenv("MACH1_ADDR")))
+		log.Println("test:", len(testipset), " sent")
 	}
 }
 
