@@ -79,7 +79,7 @@ func main() {
 		Shuffle(testipset)
 		testipset = testipset[0:r]
 		sendIPS(testipset, string(os.Getenv("MACH1_ADDR")))
-		log.Println("test:", len(testipset), " sent")
+		log.Println("test:", len(testipset), " sent", "r = ", r)
 	}
 }
 
