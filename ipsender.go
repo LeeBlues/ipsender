@@ -4,6 +4,7 @@ import (
 	ejson "encoding/json"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"net/rpc/jsonrpc"
@@ -74,8 +75,25 @@ func main() {
 	}
 
 	if firstArg == "test" {
+		r := rand.Intn(len(testipset))
+		Shuffle(testipset)
+		testipset = testipset[0:r]
 		sendIPS(testipset, string(os.Getenv("MACH1_ADDR")))
 		log.Println("test:", len(testipset), " sent")
+	}
+}
+
+func Shuffle(vals []string) {
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	// We start at the end of the slice, inserting our random
+	// values one at a time.
+	for n := len(vals); n > 0; n-- {
+		randIndex := r.Intn(n)
+		// We swap the value at index n-1 and the random index
+		// to move our randomly chosen value to the end of the
+		// slice, and to move the value that was at n-1 into our
+		// unshuffled portion of the slice.
+		vals[n-1], vals[randIndex] = vals[randIndex], vals[n-1]
 	}
 }
 
