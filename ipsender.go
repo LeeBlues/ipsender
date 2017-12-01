@@ -19,11 +19,12 @@ type Result bool
 func main() {
 
 	if len(os.Args) < 2 {
-		panic("에러: 2개 미만의 argument")
+		panic("error: need 2 arguments")
 	}
 	//	programName := os.Args[0]
 	firstArg := os.Args[1]
 
+	rand.Seed(time.Now().UTC().UnixNano())
 	var newipset []string
 	var oldipset []string
 	var k int = 0 //for test
