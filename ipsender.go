@@ -81,7 +81,7 @@ func main() {
 				//log.Println("ipset not changed")
 			}
 			oldipset = newipset
-			if k%30 == 0 {
+			if k%8 == 0 {
 				oldipset = nil
 				newipset = append(newipset, testipset[m])
 				k = 0
