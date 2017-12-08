@@ -94,11 +94,12 @@ func main() {
 	}
 
 	if firstArg == "test" {
-		r := rand.Intn(len(testipset))
-		Shuffle(testipset)
-		testipset = testipset[0:r]
+		//r := rand.Intn(len(testipset))
+		//Shuffle(testipset)
+		//testipset = testipset[0:r]
 		sendIPS(testipset, string(os.Getenv("MACH1_ADDR")))
-		log.Println("test:", len(testipset), " sent", "r = ", r)
+		//log.Println("test:", len(testipset), " sent", "r = ", r)
+		log.Println("test:", len(testipset))
 	}
 }
 
