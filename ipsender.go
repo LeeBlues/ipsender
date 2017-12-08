@@ -88,7 +88,7 @@ func main() {
 				m++
 			}
 			//sleep
-			time.Sleep(2000 * time.Millisecond)
+			time.Sleep(200 * time.Millisecond)
 			k++
 		}
 	}
