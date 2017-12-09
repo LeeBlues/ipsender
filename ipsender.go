@@ -76,36 +76,41 @@ func main() {
 	}
 
 	if firstArg == "ran" {
-		rand.Seed(time.Now().UTC().UnixNano())
-		var randomipset []string
-
-		for i := 1; i < len(testipset); i++ {
-			r := rand.Intn(1)
-			if r == 0 {
-				r := rand.Intn(len(testipset))
-				if r == 0 {
-					r = 1
-				}
-				log.Println(r)
-				if len(randomipset) == 0 {
-					randomipset = append(randomipset, testipset[r])
-				}
-				for j := 0; j < len(randomipset); j++ {
-					if randomipset[j] == testipset[r] {
-						continue
-					}
-				}
-				log.Println("randomipset length=", len(randomipset))
-				randomipset = append(randomipset, testipset[r])
-			}
-		}
-
-		//log.Println(len(randomipset), " length")
 		var k int = 0
 		for {
-			if k%5 == 0 {
-				go sendIPS(randomipset, string(os.Getenv("MACH1_ADDR")))
-				log.Println(len(randomipset), " sent")
+			if k%10 == 0 {
+				//log.Println(randomipset)
+				//log.Println(len(randomipset), " sent")
+				var sw bool
+				var randomipset []string
+				for i := 1; i < len(testipset); i++ {
+					rand.Seed(time.Now().UTC().UnixNano())
+					r := rand.Intn(2)
+					//log.Println("first r =", r)
+					if r == 0 {
+						rand.Seed(time.Now().UTC().UnixNano())
+						r := rand.Intn(len(testipset))
+						//log.Println("se r =", r)
+						if r == 0 {
+							r = 1
+						}
+						if len(randomipset) == 0 {
+							randomipset = append(randomipset, testipset[r])
+						}
+						sw = true
+						for j := 0; j < len(randomipset); j++ {
+							if randomipset[j] == testipset[r] {
+								sw = false
+								break
+							}
+						}
+						if sw == true {
+							//log.Println("randomipset length=", len(randomipset))
+							randomipset = append(randomipset, testipset[r])
+						}
+					}
+				}
+				log.Println("len of randomipset", len(randomipset))
 				k = 0
 			}
 			//sleep
