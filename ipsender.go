@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"net/rpc/jsonrpc"
 	"os"
-	"reflect"
+	//	"reflect"
 	"time"
 )
 
@@ -26,9 +26,9 @@ func main() {
 
 	rand.Seed(time.Now().UTC().UnixNano())
 	var newipset []string
-	var oldipset []string
-	var k int = 0 //for test
-	var m int = 0 // for test
+	//	var oldipset []string
+	//	var k int = 0 //for test
+	//	var m int = 0 // for test
 
 	//	url := "https://app.rainforestqa.com/api/1/vm_stack"
 	//testipset, _ := getIPsfromHTTP(url)
@@ -66,39 +66,52 @@ func main() {
 		"5.9.70.148", "5.9.79.226", "5.9.80.202", "5.9.85.179", "5.9.93.73:12345", "52.62.170.126", "78.46.128.183", "78.46.35.218", "78.46.36.58", "78.46.38.131", "78.46.38.150",
 		"78.46.40.164", "78.46.64.100", "78.46.83.240", "78.47.60.200", "88.198.107.43", "88.198.111.101", "88.198.206.41", "88.198.221.230", "88.198.26.199", "88.198.53.231",
 		"88.198.55.178", "88.198.90.99"}
-	if firstArg == "nom" {
+
+	if firstArg == "nor" {
 		//newipset, _ = getIPsfromHTTP(url)
 		path := os.Getenv("HOME") + "/addrbook.json"
 		newipset, _ = getIPsFromFile(path)
+		go sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
 
-		for {
-			//  compare
-			res := reflect.DeepEqual(newipset, oldipset)
-			if res == false {
-				go sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
-				log.Println(len(newipset), " sent")
-			} else {
-				//log.Println("ipset not changed")
+	}
+
+	if firstArg == "ran" {
+		rand.Seed(time.Now().UTC().UnixNano())
+		var randomipset []string
+
+		for i := 1; i < len(testipset); i++ {
+			r := rand.Intn(1)
+			if r == 0 {
+				r := rand.Intn(len(testipset))
+				if r == 0 {
+					r = 1
+				}
+				log.Println(r)
+				if len(randomipset) == 0 {
+					randomipset = append(randomipset, testipset[r])
+				}
+				for j := 0; j < len(randomipset); j++ {
+					if randomipset[j] == testipset[r] {
+						continue
+					}
+				}
+				log.Println("randomipset length=", len(randomipset))
+				randomipset = append(randomipset, testipset[r])
 			}
-			oldipset = newipset
-			if k%8 == 0 {
-				oldipset = nil
-				newipset = append(newipset, testipset[m])
+		}
+
+		//log.Println(len(randomipset), " length")
+		var k int = 0
+		for {
+			if k%5 == 0 {
+				go sendIPS(randomipset, string(os.Getenv("MACH1_ADDR")))
+				log.Println(len(randomipset), " sent")
 				k = 0
-				m++
 			}
 			//sleep
 			time.Sleep(200 * time.Millisecond)
 			k++
 		}
-	}
-
-	if firstArg == "ran" {
-		r := rand.Intn(len(testipset))
-		Shuffle(testipset)
-		testipset = testipset[0:r]
-		sendIPS(testipset, string(os.Getenv("MACH1_ADDR")))
-		log.Println("test:", len(testipset), " sent", "r = ", r)
 	}
 
 	if firstArg == "all" {
