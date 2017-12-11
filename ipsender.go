@@ -47,7 +47,7 @@ func main() {
 		newipset, _ := getIPsFromFile(path)
 
 		sendIPS(newipset, string(os.Getenv("MACH1_ADDR")))
-		log.Println("normal:", len(testipset), "sent")
+		log.Println("normal:", len(newipset), "sent")
 
 	}
 
