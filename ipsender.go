@@ -54,7 +54,7 @@ func main() {
 	if firstArg == "ran" {
 		var k int = 0
 		for {
-			if k%10 == 0 {
+			if k%2 == 0 {
 				//log.Println(randomipset)
 				//log.Println(len(randomipset), " sent")
 				var sw bool
