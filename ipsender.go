@@ -103,6 +103,11 @@ func main() {
 		sendIPS(testipset, string(os.Getenv("MACH1_ADDR")))
 		log.Println("test:", len(testipset), "sent")
 	}
+
+	if firstArg == "zero" {
+		sendIPS(nil, string(os.Getenv("MACH1_ADDR")))
+		log.Println("test: 0 sent")
+	}
 }
 
 func Shuffle(vals []string) {
