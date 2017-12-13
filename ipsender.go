@@ -87,10 +87,10 @@ func main() {
 					}
 				}
 				log.Println("sending ", len(randomipset))
-				time.Sleep(1 * time.Second)
+
 				sendIPS(randomipset, string(os.Getenv("MACH1_ADDR")))
 				log.Println(len(randomipset), "sent")
-
+				time.Sleep(2 * time.Second)
 				k = 0
 			}
 			//sleep
